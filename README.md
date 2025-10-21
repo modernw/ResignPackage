@@ -32,7 +32,7 @@
 <p>例如：</p>
 <p>Example:</p>
 
-<pre><code>"E:\Profiles\Bruce\Desktop\Others\wsapp\Build\MakeCert.exe" -n "CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" -r -a sha256 -len 2048 -cy end -h 0 -eku 1.3.6.1.5.5.7.3.3 -b 01/01/2000 -sv "Output\Microsoft.3DBuilder_x86.pvk" "Output\Microsoft.3DBuilder_x86.cer"</code></pre>
+<pre><code>"MakeCert.exe" -n "CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" -r -a sha256 -len 2048 -cy end -h 0 -eku 1.3.6.1.5.5.7.3.3 -b 01/01/2000 -sv "Output\Microsoft.3DBuilder_x86.pvk" "Output\Microsoft.3DBuilder_x86.cer"</code></pre>
 
 <p>执行后会弹出一个窗口（截图中文本为翻译版，原为英文），提示是否创建密码。根据需要选择是否设置密码。密码不会影响 CER 证书的导入，但会影响 PFX 文件的导入。建议直接点击 “OK” 或 “None”，不要直接关闭窗口。</p>
 
@@ -64,7 +64,7 @@
 <p>例如：</p>
 <p>Example:</p>
 
-<pre><code>"E:\Profiles\Bruce\Desktop\Others\wsapp\Build\Pvk2Pfx.exe" -pvk "Output\Microsoft.3DBuilder_x86.pvk" -spc "Output\Microsoft.3DBuilder_x86.cer" -pfx "Output\Microsoft.3DBuilder_x86.pfx"</code></pre>
+<pre><code>"Pvk2Pfx.exe" -pvk "Output\Microsoft.3DBuilder_x86.pvk" -spc "Output\Microsoft.3DBuilder_x86.cer" -pfx "Output\Microsoft.3DBuilder_x86.pfx"</code></pre>
 
 <p>如果成功，命令行不会输出任何内容。</p>
 <p>If successful, no message will be displayed.</p>
@@ -134,7 +134,7 @@
 <p>You can simplify signing operations by using a shortcut.</p>
 
 <p>例如，将一个快捷方式的目标设为：<br>
-<code>"E:\Profiles\Bruce\Desktop\WSAppBak 1.1\WSAppBak\signtool.exe" sign -fd SHA256 -a -f</code><br>
+<code>"...\signtool.exe" sign -fd SHA256 -a -f</code><br>
 拖入文件时执行命令行：<br>
 <code>signtool.lnk &lt;PFX_File_Path&gt; &lt;Package_File_Path&gt;</code><br>
 其效果等同于：<br>
