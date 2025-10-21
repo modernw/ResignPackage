@@ -1,122 +1,174 @@
-<h1>如何给包进行签名</h1>
-<h2>创建签名文件</h2>
-<h3>准备文件</h3>
-以下文件来自 Windows Kits（包括 Windows 8.x 和 10），如果做 Metro/UWP 应用的相关开发会有这些工具。
+(Translated by CharGTP)
+<h1>如何给包进行签名<br>How to Sign an App Package</h1>
+
+<h2>创建签名文件<br>Create a Signature File</h2>
+
+<h3>准备文件<br>Prepare Required Files</h3>
+<p>以下文件来自 Windows Kits（包括 Windows 8.x 和 10），如果进行 Metro/UWP 应用开发，通常已安装这些工具。</p>
+<p>The following files come from the Windows Kits (Windows 8.x or 10). If you have developed Metro/UWP apps, you likely already have them.</p>
+
 <ul>
-  <li>makecert.exe – 签名创建工具</li>
-  <li>pvk2pfx.exe – 将 PVK 文件转换为 PFX 文件</li>
+  <li>makecert.exe – 签名创建工具 / Certificate creation tool</li>
+  <li>pvk2pfx.exe – 将 PVK 文件转换为 PFX 文件 / Converts PVK to PFX file</li>
 </ul>
 
-除了从 Windows Kits 获取以上文件，还可以从 WSAppBak 获取。（WSAppBak 会带这些文件，用于 Appx 的打包和签名）
+<p>除了从 Windows Kits 获取这些文件，还可以从 <b>WSAppBak</b> 获取（该项目附带这些文件，用于 Appx 打包和签名）。</p>
+<p>You can also obtain them from <b>WSAppBak</b> (it includes all tools needed for Appx packaging and signing).</p>
 
-<h3>创建 CER 和 PVK 文件</h3>
-该教程来自 WSAppBak 的源码。这里不介绍原理，只介绍方法，具体的上网搜。
-打开命令行，为了方便操作，我们直接 dir 到前文提到的工具所在的目录。
+---
 
-我们输入以下命令
+<h3>创建 CER 和 PVK 文件<br>Create CER and PVK Files</h3>
+<p>该教程来自 WSAppBak 的源码。这里只介绍操作步骤，不涉及原理。</p>
+<p>This tutorial is based on the WSAppBak source code. Here we only describe the steps, not the underlying principles.</p>
+
+<p>打开命令行，为了方便操作，先切换到包含这些工具的目录。</p>
+<p>Open Command Prompt and navigate to the folder where the tools are located.</p>
+
+<p>输入以下命令：</p>
+<p>Enter the following command:</p>
 
 <pre><code>makecert.exe -n &lt;Identity_Publisher&gt; -r -a sha256 -len 2048 -cy end -h 0 -eku 1.3.6.1.5.5.7.3.3 -b 01/01/2000 -sv &lt;Output_PVK_File_Path&gt; &lt;Output_CER_File_Path&gt;</code></pre>
 
-例如：
+<p>例如：</p>
+<p>Example:</p>
 
 <pre><code>"E:\Profiles\Bruce\Desktop\Others\wsapp\Build\MakeCert.exe" -n "CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" -r -a sha256 -len 2048 -cy end -h 0 -eku 1.3.6.1.5.5.7.3.3 -b 01/01/2000 -sv "Output\Microsoft.3DBuilder_x86.pvk" "Output\Microsoft.3DBuilder_x86.cer"</code></pre>
 
-如截图所示，这时候弹出一个窗口（窗口上的文本我自己用 Resource Hacker 翻译了，实际上都是英文），提示是否创建密码。这个根据自己的需求。密码不影响 CER 证书导入，影响 PFX 证书的导入。这里我们就不用密码了。（注意，不要直接关闭窗口，而是点“OK”或“None”
+<p>执行后会弹出一个窗口（截图中文本为翻译版，原为英文），提示是否创建密码。根据需要选择是否设置密码。密码不会影响 CER 证书的导入，但会影响 PFX 文件的导入。建议直接点击 “OK” 或 “None”，不要直接关闭窗口。</p>
+
+<p>After execution, a dialog will appear (text shown here is translated from English). It asks whether to set a password. You may skip it — the password does not affect CER import but is required for PFX import. Click “OK” or “None”; do not close the window directly.</p>
 
 <img class="domain-img domain-img-center" src="https://modernw.github.io/MetroTipsOnline/Articles/MakePackage/Images/makesign-2-1.png">
 
-如截图所示，如果没有创建成功，则会输出错误信息。如果成功，会输出“Succeeded”
+<p>如图所示，如果创建失败，会输出错误信息；如果成功，会显示 “Succeeded”。</p>
+<p>If it fails, an error message will appear; on success, you’ll see “Succeeded”.</p>
 
 <img class="domain-img domain-img-center" src="https://modernw.github.io/MetroTipsOnline/Articles/MakePackage/Images/makesign-2-2.png">
 <img class="domain-img domain-img-center" src="https://modernw.github.io/MetroTipsOnline/Articles/MakePackage/Images/makesign-2-3.png">
 
-<h3>创建 PFX 文件</h3>
+---
 
-该教程来自 WSAppBak 的源码。这里不介绍原理，只介绍方法，具体的上网搜。
+<h3>创建 PFX 文件<br>Create a PFX File</h3>
 
-打开命令行，为了方便操作，我们直接 dir 到前文提到的工具所在的目录。
+<p>该教程同样来自 WSAppBak 源码，只介绍操作方法。</p>
+<p>This tutorial also comes from WSAppBak; we focus on the practical method only.</p>
 
-准备之前的 CER 文件和 PVK 文件（这两个文件是配套的）
+<p>打开命令行并定位到工具所在目录，准备好刚才生成的 CER 和 PVK 文件（这两个文件必须配套）。</p>
+<p>Open Command Prompt, navigate to the tool’s directory, and prepare the previously created CER and PVK files (they must match).</p>
 
-输入以下命令行：
+<p>输入以下命令：</p>
+<p>Enter the following command:</p>
 
-<pre><code class="text-code-font">pvk2pfx.exe -pvk &lt;PVK_File_Path&gt; -spc &lt;CER_File_Path&gt; -pfx &lt;Output_PFX_File_Path&gt;</code></pre>
+<pre><code>pvk2pfx.exe -pvk &lt;PVK_File_Path&gt; -spc &lt;CER_File_Path&gt; -pfx &lt;Output_PFX_File_Path&gt;</code></pre>
 
-例如：
+<p>例如：</p>
+<p>Example:</p>
 
-<pre><code class="text-code-font">"E:\Profiles\Bruce\Desktop\Others\wsapp\Build\Pvk2Pfx.exe" -pvk "Output\Microsoft.3DBuilder_x86.pvk" -spc "Output\Microsoft.3DBuilder_x86.cer" -pfx "Output\Microsoft.3DBuilder_x86.pfx"</code></pre>
+<pre><code>"E:\Profiles\Bruce\Desktop\Others\wsapp\Build\Pvk2Pfx.exe" -pvk "Output\Microsoft.3DBuilder_x86.pvk" -spc "Output\Microsoft.3DBuilder_x86.cer" -pfx "Output\Microsoft.3DBuilder_x86.pfx"</code></pre>
 
-如果成功了，那么不会有什么输出
+<p>如果成功，命令行不会输出任何内容。</p>
+<p>If successful, no message will be displayed.</p>
 
 <img class="domain-img domain-img-center" src="https://modernw.github.io/MetroTipsOnline/Articles/MakePackage/Images/makesign-3-1.png">
 
-如果在创建 CER 文件和 PVK 文件使用密码，那么在创建 PFX 文件时仍要输入密码。（与创建 CER 文件和 PVK 文件输入的密码一样）。同样，成功是不会有什么输出
+<p>如果创建 CER/PVK 时设置了密码，生成 PFX 时需再次输入该密码。成功时同样不会有输出。</p>
+<p>If you set a password when creating the CER/PVK files, you’ll need to enter it again here. Successful execution also produces no output.</p>
 
+<p>这里的窗口是我自行翻译的，实际版本中通常为英文界面。</p>
+<p>The screenshots are localized; the actual dialogs are in English.</p>
 
-这里的窗口仍然是我翻译并修改的，其实平常能获得到的资源是英文。
+<p>PFX 文件用于导入签名或为应用商店包重新签名。CER 文件用于导入证书，而 CER + PVK 则用于生成 PFX 文件。</p>
+<p>The PFX file is used for signature import or re-signing Store packages. The CER file is for certificate import, and CER + PVK together generate the PFX file.</p>
 
-PFX 将用来导入签名，或者用于应用商店包的重签名。
+---
 
-CER 将用于导入证书。
+<h2>包的签名<br>Signing the Package</h2>
 
-CER 和 PVK 用于生成 PFX 文件。
+<h3>准备文件<br>Prepare Required Files</h3>
+<p>以下文件同样来自 Windows Kits（Windows 8.x 或 10）。</p>
+<p>The following file also comes from the Windows Kits (Windows 8.x or 10).</p>
 
-<h2>包的签名</h2>
-<h3>准备文件</h3>
-以下文件来自 Windows Kits（包括 Windows 8.x 和 10），如果做 Metro/UWP 应用的相关开发会有这些工具。
+<ul><li>signtool.exe – 应用包签名工具 / Signing tool for App packages</li></ul>
 
-<ul><li>signtool.exe – 应用包签名工具。</li></ul>
+<p>建议右击查看程序版本号，推荐使用 6.3.xxxxx.xxxxx 或更高版本。6.2.xxxxx.xxxxx 不支持签名 AppxBundle。至于 Msix/MsixBundle 签名，不在本篇范围内。</p>
+<p>Check the version before use. Recommended version: 6.3.xxxxx.xxxxx or higher. Version 6.2.xxxxx.xxxxx does not support AppxBundle signing. Msix/MsixBundle signing is not covered here.</p>
 
-注意，使用前请建议右击查看程序的版本，建议版本为 6.3.xxxxx.xxxxx 版本及以上，6.2.xxxxx.xxxxx 版本不支持签名 AppxBundle 包。至于 Msix/MsixBundle 包的签名，这里不做考虑。（看 Msix/MsixBundle 是从哪个系统版本出现就从哪个系统版本的 Kits 提取）
+<p>这些文件同样可从 WSAppBak 项目中获得。</p>
+<p>You can also get them from the WSAppBak project.</p>
 
-除了从 Windows Kits 获取以上文件，还可以从 WSAppBak 获取。（WSAppBak 会带这些文件，用于 Appx 的打包和签名）
+---
 
-<h3>使用 SignTool 对包进行签名</h3>
-该教程来自 WSAppBak 的源码。这里不介绍原理，只介绍方法，具体的上网搜。
+<h3>使用 SignTool 对包进行签名<br>Sign Packages with SignTool</h3>
 
-准备一个应用商店包（Appx/AppxBundle/Msix/MsixBundle，确保是 SignTool 支持的），和 PFX 签名文件。
+<p>该教程来自 WSAppBak 的源码，这里只介绍操作步骤。</p>
+<p>This guide comes from WSAppBak’s source code — only the steps are shown here.</p>
 
-打开命令行，为了方便操作，我们直接 dir 到 signtool.exe 所在的目录。
+<p>准备一个应用包（Appx/AppxBundle/Msix/MsixBundle，确保 SignTool 支持），以及 PFX 签名文件。</p>
+<p>Prepare an app package (Appx/AppxBundle/Msix/MsixBundle — make sure SignTool supports it) and a PFX signature file.</p>
+
+<p>打开命令行，定位到 signtool.exe 所在目录。</p>
+<p>Open Command Prompt and navigate to the folder containing signtool.exe.</p>
 
 <img class="domain-img domain-img-center" src="https://modernw.github.io/MetroTipsOnline/Articles/MakePackage/Images/signpkg-2-1.png">
 
-然后我们输入以下命令行：
+<p>输入以下命令：</p>
+<p>Enter the following command:</p>
 
-<pre><code class="text-code-font">signtool.exe sign -fd SHA256 -a –f &lt;PFX_File_Path&gt; &lt;Package_File_Path&gt;</code></pre>
+<pre><code>signtool.exe sign -fd SHA256 -a -f &lt;PFX_File_Path&gt; &lt;Package_File_Path&gt;</code></pre>
 
-例如：
+<p>例如：</p>
+<p>Example:</p>
 
-<pre><code class="text-code-font">signtool.exe sign -fd SHA256 -a -f "Sign File.pfx" "File WillSign.appx"</code></pre>
+<pre><code>signtool.exe sign -fd SHA256 -a -f "Sign File.pfx" "File WillSign.appx"</code></pre>
 
-等待完成签名，当出现“Successfully signed”就意味着签名成功。
-
-如截图：
+<p>等待命令完成，当输出 “Successfully signed” 时表示签名成功。</p>
+<p>Wait for the command to finish. If you see “Successfully signed,” the signing is complete.</p>
 
 <img class="domain-img domain-img-center" src="https://modernw.github.io/MetroTipsOnline/Articles/MakePackage/Images/signpkg-2-3.png">
 
-<p class="text-code-font">简化操作：<br>我们不用每次都输入那几个不变的命令参数，只需要创建一个快捷方式即可。<br>我们把一个文件拖到快捷方式，执行的是“exec.lnk %1”（%1 作为占位符指的是传入的命令行参数文本，这里指的是拖入的文件路径文本，懂相关编程的应该会了解），假设快捷方式的目标为“exec.exe”，那么执行的是“exec.exe %1”<br>我们创建一个 signtool 的快捷方式，把目标设为“&lt;signtool_file_path&gt; sign -fd SHA256 -a -f”，如“"E:\Profiles\Bruce\Desktop\WSAppBak 1.1\WSAppBak\signtool.exe" sign -fd SHA256 -a -f”，当我们用命令行调用这个快捷方式时，直接输入：<br>signtool.lnk &lt;PFX_File_Path&gt; &lt;Package_File_Path&gt;<br>实际上执行的是“&lt;signtool_file_path&gt; sign -fd SHA256 -a –f &lt;PFX_File_Path&gt; &lt;Package_File_Path&gt;”</p>
+---
 
-如截图：
+<h3>简化操作<br>Automation Tip</h3>
+
+<p>可以通过创建快捷方式简化命令行签名操作。</p>
+<p>You can simplify signing operations by using a shortcut.</p>
+
+<p>例如，将一个快捷方式的目标设为：<br>
+<code>"E:\Profiles\Bruce\Desktop\WSAppBak 1.1\WSAppBak\signtool.exe" sign -fd SHA256 -a -f</code><br>
+拖入文件时执行命令行：<br>
+<code>signtool.lnk &lt;PFX_File_Path&gt; &lt;Package_File_Path&gt;</code><br>
+其效果等同于：<br>
+<code>&lt;signtool_path&gt; sign -fd SHA256 -a -f &lt;PFX_File_Path&gt; &lt;Package_File_Path&gt;</code></p>
+
+<p>For example, create a shortcut with this target:<br>
+<code>"E:\Profiles\Bruce\Desktop\WSAppBak 1.1\WSAppBak\signtool.exe" sign -fd SHA256 -a -f</code><br>
+Then drag a file onto the shortcut to execute:<br>
+<code>signtool.lnk &lt;PFX_File_Path&gt; &lt;Package_File_Path&gt;</code><br>
+This effectively runs:<br>
+<code>&lt;signtool_path&gt; sign -fd SHA256 -a -f &lt;PFX_File_Path&gt; &lt;Package_File_Path&gt;</code></p>
 
 <img class="domain-img domain-img-center" src="https://modernw.github.io/MetroTipsOnline/Articles/MakePackage/Images/lnkcmd.png">
 
-注意：
-签名 AppxBundle 时，请用较高版本的 signtool.exe，AppxBundle 在 Windows 8.1 出现，那么用 8.1 的 Windows Kits 即可。如果 signtool.exe 版本不支持，会出现以下输出。
+---
+
+<h3>注意事项<br>Notes</h3>
+
+<p>签名 AppxBundle 时，请使用较新版本的 signtool.exe（建议使用 Windows 8.1 的 Kits）。旧版本会输出错误。</p>
+<p>When signing AppxBundles, use a newer signtool.exe (e.g., from Windows 8.1 Kits). Older versions will fail with an error message.</p>
 
 <img class="domain-img domain-img-center" src="https://modernw.github.io/MetroTipsOnline/Articles/MakePackage/Images/signpkg-2-6.png">
 
-注意证书颁发者（我也没弄清具体原因），如果与商店应用包的清单中的 Identity Publisher 不对应，可能会导致签名失败
+<p>注意证书颁发者信息。如果签名证书的 Publisher 与包清单中的 Identity Publisher 不一致，签名可能会失败。</p>
+<p>Ensure the certificate’s Publisher matches the Identity Publisher in the package manifest, or signing may fail.</p>
 
 <img class="domain-img domain-img-center" src="https://modernw.github.io/MetroTipsOnline/Articles/MakePackage/Images/signpkg-2-7.png">
 
-通常我们不用对商店应用的运行时包和 AppxBundle 中的资源包进行重签名。重签名适用于安装后能运行应用的包。运行时包和资源包并不属于这种安装后能运行应用的包。
+<p>通常无需对商店应用的运行时包或 AppxBundle 中的资源包进行重签名。重签名仅适用于安装后可直接运行的应用包。</p>
+<p>Typically, you don’t need to re-sign runtime or resource packages inside AppxBundles. Re-signing applies only to installable and runnable application packages.</p>
 
-还有一种情况是这个包因为数字签名而无法安装，那么我们就要考虑重签名了。
+<p>如果包因数字签名问题导致无法安装，这时才需要考虑重新签名。</p>
+<p>Only consider re-signing when installation fails due to signature issues.</p>
 
-运行时包和资源包（一般是 Appx/Msix 格式）的清单文件（AppxManifest.xml）中没有“Applications”节点或者“Applications”节点中无”Application”子节点或”Application”子节点中无“Id”属性值或“Id”属性值中文本为空
+<p>运行时包和资源包（一般为 Appx/Msix 格式）的清单文件（AppxManifest.xml）中通常没有 <code>&lt;Applications&gt;</code> 节点，或其下没有 <code>&lt;Application&gt;</code> 子节点及有效的 Id 属性。这类包安装后仅用于资源调用。</p>
 
-
-
-运行时包和资源包并不属于这种安装后能运行应用的包，因为这种包安装后仅会用于调用资源。可以从清单文件中看出，连“Applications”这个节点都没有
-
-
+<p>Runtime and resource packages (usually in Appx/Msix format) typically lack the <code>&lt;Applications&gt;</code> node, or it contains no valid <code>Id</code> attribute. Such packages are used only for resource access, not for execution after installation.</p>
